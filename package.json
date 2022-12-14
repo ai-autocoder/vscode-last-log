@@ -1,0 +1,56 @@
+{
+  "name": "vscode-last-log",
+  "displayName": "Last log",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:vscode-last-log.helloWorld",
+		"onView:last-log-explorer"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [{
+      "command": "vscode-last-log.helloWorld",
+      "title": "Hello World"
+    }],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "last-log-explorer",
+					"title": "Last log",
+					"icon": "./icon-book.svg"
+				}
+			]
+		},
+		"views": {
+			"last-log-explorer": [
+				{
+					"id": "package-dependencies",
+					"name": ""
+				}
+			]
+		}
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "eslint": "^8.28.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.1.0",
+    "typescript": "^4.9.3",
+    "@vscode/test-electron": "^2.2.0"
+  }
+}
