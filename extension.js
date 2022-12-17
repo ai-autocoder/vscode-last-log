@@ -9,11 +9,11 @@ const path = require('node:path');
 function activate(context) {
 
 	// create a new status bar item
-	const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1000);
+	const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 11000);
 	myStatusBarItem.command = "vscode-last-log.openLastLog";
 	myStatusBarItem.text = 'Open Log';
 	myStatusBarItem.name = 'Last Log';
-	myStatusBarItem.tooltip = 'Click to open last log';
+	myStatusBarItem.tooltip = 'Click to open';
 	myStatusBarItem.show();
 
 	const myCommand = vscode.commands.registerCommand('vscode-last-log.openLastLog', async function () {
