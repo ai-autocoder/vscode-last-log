@@ -17,24 +17,7 @@
 		"commands": [{
 			"command": "vscode-last-log.openLastLog",
 			"title": "Open last log"
-		}],
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "last-log-explorer",
-					"title": "Last log",
-					"icon": "./icon-book.svg"
-				}
-			]
-		},
-		"views": {
-			"last-log-explorer": [
-				{
-					"id": "package-dependencies",
-					"name": ""
-				}
-			]
-		}
+		}]
 	},
 	"scripts": {
 		"lint": "eslint .",
