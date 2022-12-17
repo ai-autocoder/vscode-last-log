@@ -1,35 +1,76 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+const fs = require('fs');
+const fsP = require('fs/promises');
+const path = require('node:path');
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-last-log.openLastLog', async function () {
+		const lastLog = await getLastLog();
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('"vscode-last-log" is now active!');
+		vscode.window.showInformationMessage(lastLog.maxFile);
+
+		// Open the file
+		vscode.commands.executeCommand('vscode.open', vscode.Uri.file(lastLog.pathLastFile));
+	}));
+}
+
+async function getLastLog() {
+	// let logFolder = vscode.workspace.getConfiguration('vscode-last-log').get('logFolder');
 	
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('vscode-last-log.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
-		
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Last log!');
-	});
+	// Get root folder of the workspace
+	const workSpaceFolder = getWorkspacePath();
 	
-	context.subscriptions.push(disposable);
+	if( workSpaceFolder == undefined ) return;
 	
+	// Set the path of the folder to check
+	const logFolder = path.join(workSpaceFolder, 'xml');
+	const lastFile = await getLastFile(logFolder);
+
+	return lastFile;
+}
+
+async function getLastFile(logFolder, max = 0, maxFile = "", pathLastFile = "") {
+
+	const ext = "txt";
+	//find the most recent file including subfolders
+	try {
+		const files = await fsP.readdir(logFolder);
+		for (const file of files){
+			const filePath = path.join(logFolder, file);
+			const stat = fs.statSync(filePath);
+			if (stat.isFile() && path.extname(file) === '.' + ext) {
+				if (stat.mtime > max) {
+					max = stat.mtime;
+					maxFile = file;
+					pathLastFile = filePath;
+				}
+			} else if (stat.isDirectory()) {
+				({ max, maxFile, pathLastFile } = await getLastFile(filePath, max, maxFile, pathLastFile));
+			}
+		}
+	} catch (err) {
+		console.error(err);
+	}
+	return ({ max, maxFile, pathLastFile });
+}
+
+function getWorkspacePath(){
+	if(vscode.workspace.workspaceFolders !== undefined) {
+		// let wf = vscode.workspace.workspaceFolders[0].uri.path ;
+		let f = vscode.workspace.workspaceFolders[0].uri.fsPath ; 
+		return f;
+	}
+	else {
+		vscode.window.showErrorMessage("YOUR-EXTENSION: Working folder not found, open a folder an try again");
+		return undefined;
+	}
 }
 
 // This method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
 	activate,

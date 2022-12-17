@@ -16,8 +16,8 @@
   "main": "./extension.js",
   "contributes": {
     "commands": [{
-      "command": "vscode-last-log.helloWorld",
-      "title": "Hello World"
+      "command": "vscode-last-log.openLastLog",
+      "title": "Open last log"
     }],
 		"viewsContainers": {
 			"activitybar": [
