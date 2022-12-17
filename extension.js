@@ -18,9 +18,13 @@ function activate(context) {
 
 	const myCommand = vscode.commands.registerCommand('vscode-last-log.openLastLog', async function () {
 		const lastLog = await getLastLog();
-		vscode.window.showInformationMessage(lastLog.maxFile);
-		// Open the file
-		vscode.commands.executeCommand('vscode.open', vscode.Uri.file(lastLog.pathLastFile));
+		if (lastLog.pathLastFile == "") {
+			vscode.window.showWarningMessage('No logs found');
+		} else {
+			vscode.window.showInformationMessage(lastLog.maxFile);
+			// Open the file
+			vscode.commands.executeCommand('vscode.open', vscode.Uri.file(lastLog.pathLastFile));
+		}
 	});
 
 	context.subscriptions.push(myStatusBarItem, myCommand);
