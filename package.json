@@ -30,6 +30,10 @@
 				 "type": "string",
 				 "default": "",
 				 "description": "The extension of the log file. If value is '*' or no value is set it will checks for any file type."
+			  },
+			  "lastLog.includeSubfolders": {
+				 "type": "boolean",
+				 "default": true
 			  }
 			}
 		 }

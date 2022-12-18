@@ -40,12 +40,14 @@ async function getLastLog() {
 	
 	// Get log folder path from user configuration
 	const logFolder = path.join(workSpaceFolder, vscode.workspace.getConfiguration('lastLog').get('folderPath'));
-	const lastFile = await getLastFile(logFolder);
+	// Get 'include subfolder' from user configuration
+	const incSubFolders = vscode.workspace.getConfiguration('lastLog').get('includeSubfolders');
+	const lastFile = await getLastFile(incSubFolders, logFolder);
 
 	return lastFile;
 }
 
-async function getLastFile(logFolder, max = 0, maxFile = "", pathLastFile = "") {
+async function getLastFile(incSubFolders, logFolder, max = 0, maxFile = "", pathLastFile = "") {
 
 	//find the most recent file including subfolders
 	try {
@@ -59,8 +61,8 @@ async function getLastFile(logFolder, max = 0, maxFile = "", pathLastFile = "") 
 					maxFile = file;
 					pathLastFile = filePath;
 				}
-			} else if (stat.isDirectory()) {
-				({ max, maxFile, pathLastFile } = await getLastFile(filePath, max, maxFile, pathLastFile));
+			} else if (stat.isDirectory() && incSubFolders) {
+				({ max, maxFile, pathLastFile } = await getLastFile(true, filePath, max, maxFile, pathLastFile));
 			}
 		}
 	} catch (err) {
