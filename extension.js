@@ -19,9 +19,9 @@ function activate(context) {
 	const myCommand = vscode.commands.registerCommand('vscode-last-log.openLastLog', async function () {
 		const lastLog = await getLastLog();
 		if (lastLog.pathLastFile == "") {
-			vscode.window.showWarningMessage('No logs found');
+			vscode.window.showWarningMessage('Last Log: No logs found');
 		} else {
-			vscode.window.showInformationMessage(lastLog.maxFile);
+			vscode.window.showInformationMessage(`Last Log: ${lastLog.maxFile}`);
 			// Open the file
 			vscode.commands.executeCommand('vscode.open', vscode.Uri.file(lastLog.pathLastFile));
 		}
@@ -81,7 +81,7 @@ function getWorkspacePath(){
 		return f;
 	}
 	else {
-		vscode.window.showErrorMessage("YOUR-EXTENSION: Working folder not found, open a folder an try again");
+		vscode.window.showErrorMessage("Last Log: Working folder not found, open a folder an try again");
 		return undefined;
 	}
 }
