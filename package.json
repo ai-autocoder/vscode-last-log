@@ -25,6 +25,11 @@
 				 "type": "string",
 				 "default": "xml",
 				 "markdownDescription": "Specifies the folder path containing the log files. Default value is **'xml'** which represents: **\\workspace-folder\\xml**. To navigate back outside the workspace add ..\\ for each folder."
+			  },
+			  "lastLog.fileExtension": {
+				 "type": "string",
+				 "default": "",
+				 "description": "The extension of the log file. If value is '*' or no value is set it will checks for any file type."
 			  }
 			}
 		 }

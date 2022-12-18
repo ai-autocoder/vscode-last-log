@@ -47,14 +47,13 @@ async function getLastLog() {
 
 async function getLastFile(logFolder, max = 0, maxFile = "", pathLastFile = "") {
 
-	const ext = "txt";
 	//find the most recent file including subfolders
 	try {
 		const files = await fsP.readdir(logFolder);
 		for (const file of files){
 			const filePath = path.join(logFolder, file);
 			const stat = fs.statSync(filePath);
-			if (stat.isFile() && path.extname(file) === '.' + ext) {
+			if (stat.isFile() && checkExtension(file)) {
 				if (stat.mtime > max) {
 					max = stat.mtime;
 					maxFile = file;
@@ -68,6 +67,11 @@ async function getLastFile(logFolder, max = 0, maxFile = "", pathLastFile = "") 
 		console.error(err);
 	}
 	return ({ max, maxFile, pathLastFile });
+}
+
+function checkExtension(file){
+	const ext = vscode.workspace.getConfiguration('lastLog').get('fileExtension');
+	return (ext == "" || ext === "*" ) ? true : (path.extname(file) === '.' + ext);
 }
 
 function getWorkspacePath(){
