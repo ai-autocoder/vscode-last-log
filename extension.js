@@ -21,7 +21,7 @@ function activate(context) {
 		if (lastLog.pathLastFile == "") {
 			vscode.window.showWarningMessage('Last Log: No logs found');
 		} else {
-			vscode.window.showInformationMessage(`Last Log: ${lastLog.maxFile}`);
+			vscode.window.showInformationMessage(`Last Log: ${lastLog.maxFile} @ ~${ checkFileAge(lastLog.max)}`);
 			// Open the file
 			vscode.commands.executeCommand('vscode.open', vscode.Uri.file(lastLog.pathLastFile));
 		}
@@ -74,6 +74,24 @@ async function getLastFile(incSubFolders, logFolder, max = 0, maxFile = "", path
 function checkExtension(file){
 	const ext = vscode.workspace.getConfiguration('lastLog').get('fileExtension');
 	return (ext == "" || ext === "*" ) ? true : (path.extname(file) === '.' + ext);
+}
+
+function checkFileAge(sfileDate){
+	const ageDate = new Date(new Date() - new Date(sfileDate));
+	ageDate.setMinutes(ageDate.getMinutes() + ageDate.getTimezoneOffset());
+	let seconds = ageDate.getSeconds();
+	let minutes = ageDate.getMinutes();
+	let hours = ageDate.getHours();
+	let days = ageDate.getDate() - 1;
+	let months = ageDate.getMonth();
+	let years = ageDate.getFullYear() - 1970;
+	let timeString = years ? years + " yr" :
+						months ? months + " mth" :
+						days ? days + " d" :
+						hours ? hours + " hr" :
+						minutes ? minutes + " min" :
+						seconds + " s";
+	return timeString;
 }
 
 function getWorkspacePath(){
