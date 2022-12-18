@@ -17,7 +17,17 @@
 		"commands": [{
 			"command": "vscode-last-log.openLastLog",
 			"title": "Open last log"
-		}]
+		}],
+		"configuration": {
+			"title": "Last Log",
+			"properties": {
+			  "lastLog.folderPath": {
+				 "type": "string",
+				 "default": "xml",
+				 "markdownDescription": "Specifies the folder path containing the log files. Default value is **'xml'** which represents: **\\workspace-folder\\xml**. To navigate back outside the workspace add ..\\ for each folder."
+			  }
+			}
+		 }
 	},
 	"scripts": {
 		"lint": "eslint .",

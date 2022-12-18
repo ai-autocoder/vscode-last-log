@@ -32,15 +32,14 @@ function activate(context) {
 }
 
 async function getLastLog() {
-	// let logFolder = vscode.workspace.getConfiguration('vscode-last-log').get('logFolder');
 	
 	// Get root folder of the workspace
 	const workSpaceFolder = getWorkspacePath();
 	
 	if( workSpaceFolder == undefined ) return;
 	
-	// Set the path of the folder to check
-	const logFolder = path.join(workSpaceFolder, 'xml');
+	// Get log folder path from user configuration
+	const logFolder = path.join(workSpaceFolder, vscode.workspace.getConfiguration('lastLog').get('folderPath'));
 	const lastFile = await getLastFile(logFolder);
 
 	return lastFile;
