@@ -29,7 +29,7 @@
 			  "lastLog.fileExtension": {
 				 "type": "string",
 				 "default": "",
-				 "description": "The extension of the log file. If value is '*' or no value is set it will checks for any file type."
+				 "description": "The extension of the log file. If no value is set or value is '*' it will open all file types."
 			  },
 			  "lastLog.includeSubfolders": {
 				 "type": "boolean",
