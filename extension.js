@@ -21,7 +21,8 @@ function activate(context) {
 		if (lastLog.pathLastFile == "") {
 			vscode.window.showWarningMessage('Last Log: No logs found');
 		} else {
-			vscode.window.showInformationMessage(`Last Log: ${lastLog.maxFile} @ ~${ checkFileAge(lastLog.max)}`);
+			const message = lastLog.maxFile.slice(0, 44); 
+			vscode.window.showInformationMessage(`Last Log: ${message} @ ~${ checkFileAge(lastLog.max)}`);
 			// Open the file
 			vscode.commands.executeCommand('vscode.open', vscode.Uri.file(lastLog.pathLastFile));
 		}
