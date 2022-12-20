@@ -3,7 +3,7 @@
 	"displayName": "Last log",
 	"description": "A convenient way to open the most recent file inside a folder of your choice",
 	"icon": "resources/logo-128x128.png",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.66.1"
