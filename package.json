@@ -1,8 +1,9 @@
 {
 	"name": "vscode-last-log",
 	"displayName": "Last log",
+	"publisher": "FrancescoAnzalone",
 	"description": "A convenient way to open the most recent file inside a folder of your choice",
-	"icon": "resources/logo-128x128.png",
+	"icon": "resources/logo128x128.png",
 	"version": "0.0.2",
 	"license": "MIT",
 	"engines": {
@@ -54,7 +55,7 @@
 		"url": "https://github.com/ai-autocoder/vscode-last-log.git"
 	 },
 	"devDependencies": {
-		"@types/vscode": "^1.74.0",
+		"@types/vscode": "^1.66.1",
 		"@types/glob": "^8.0.0",
 		"@types/mocha": "^10.0.1",
 		"@types/node": "16.x",
