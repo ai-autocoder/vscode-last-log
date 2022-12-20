@@ -1,9 +1,12 @@
 # Change Log
 
-All notable changes to the "vscode-last-log" extension will be documented in this file.
+## [0.0.2]
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+- Bump version to 0.0.2
+- Set minimum VS Code version
+- Fix file age not visible if file has long name
+- Fix error when opening log before opening working folder
 
-## [Unreleased]
+## [0.0.1]
 
 - Initial release
