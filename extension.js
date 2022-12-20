@@ -18,6 +18,7 @@ function activate(context) {
 
 	const myCommand = vscode.commands.registerCommand('vscode-last-log.openLastLog', async function () {
 		const lastLog = await getLastLog();
+		if (lastLog == undefined) return;
 		if (lastLog.pathLastFile == "") {
 			vscode.window.showWarningMessage('Last Log: No logs found');
 		} else {
