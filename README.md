@@ -27,6 +27,7 @@ This extension contributes the following settings:
 * `lastLog.folderPath`: "Specifies the folder path containing the log files. Default value is **'xml'** which represents: **\\workspace-folder\\xml**. To navigate back outside the workspace add ..\\ for each folder.".
 * `lastLog.includeSubfolders`: Default true.
 * `lastLog.fileExtension`: The extension of the log files. If not specified or value is '*' it will open any file type.
+* `lastLog.excludeFolders`: The name of the folders to exclude. Any file inside those folder will be ignored.
 
 ### Example configuration:
 
@@ -34,7 +35,10 @@ This extension contributes the following settings:
 {
 	"lastLog.folderPath": "logs",
 	"lastLog.includeSubfolders": false,
-	"lastLog.fileExtension": "log"
+	"lastLog.fileExtension": "log",
+	"lastLog.excludeFolders": [
+		"nameFolder1", "nameFolder2"
+	]
 }
 ```
 

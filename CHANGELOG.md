@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.3]
+
+- Added possibility to set folder to exclude 
+
 ## [0.0.2]
 
 - Bump version to 0.0.2
