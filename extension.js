@@ -8,12 +8,12 @@ const path = require('node:path');
  */
 function activate(context) {
 
-	// create a new status bar item
+	// Create status bar item
 	const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 11000);
 	myStatusBarItem.command = "vscode-last-log.openLastLog";
 	myStatusBarItem.text = 'Open Log';
 	myStatusBarItem.name = 'Last Log';
-	myStatusBarItem.tooltip = 'Click to open';
+	myStatusBarItem.tooltip = 'Click to open log file';
 	myStatusBarItem.show();
 
 	const myCommand = vscode.commands.registerCommand('vscode-last-log.openLastLog', async function () {
@@ -37,7 +37,10 @@ async function getLastLog() {
 	// Get root folder of the workspace
 	const workSpaceFolder = getWorkspacePath();
 	
-	if( workSpaceFolder == undefined ) return;
+	if( workSpaceFolder == undefined ){
+		vscode.window.showErrorMessage("Last Log: Workspace folder not found, open a folder an try again.");
+		return;
+	}
 	
 	// Get log folder path from user configuration
 	const logFolder = path.join(workSpaceFolder, vscode.workspace.getConfiguration('lastLog').get('folderPath'));
@@ -50,13 +53,13 @@ async function getLastLog() {
 }
 
 async function getLastFile(userConfig, logFolder, max = 0, maxFile = "", pathLastFile = "") {
-	//find the most recent file including subfolders
+	// Find the most recent file including subfolders
 	try {
 		const files = await fsP.readdir(logFolder);
 		for (const file of files){
 			const filePath = path.join(logFolder, file);
 			const stat = fs.statSync(filePath);
-			if (stat.isFile() && checkExtension(file)) {
+			if (stat.isFile() && checkFileExtension(file)) {
 				if (stat.mtime > max) {
 					max = stat.mtime;
 					maxFile = file;
@@ -73,9 +76,9 @@ async function getLastFile(userConfig, logFolder, max = 0, maxFile = "", pathLas
 	return ({ max, maxFile, pathLastFile });
 }
 
-function checkExtension(file){
-	const ext = vscode.workspace.getConfiguration('lastLog').get('fileExtension');
-	return (ext == "" || ext === "*" ) ? true : (path.extname(file) === '.' + ext);
+function checkFileExtension(file){
+	const extension = vscode.workspace.getConfiguration('lastLog').get('fileExtension');
+	return (extension == "" || extension === "*" ) ? true : (path.extname(file) === '.' + extension);
 }
 
 function checkFileAge(sfileDate){
@@ -97,15 +100,7 @@ function checkFileAge(sfileDate){
 }
 
 function getWorkspacePath(){
-	if(vscode.workspace.workspaceFolders !== undefined) {
-		// let wf = vscode.workspace.workspaceFolders[0].uri.path ;
-		let f = vscode.workspace.workspaceFolders[0].uri.fsPath ; 
-		return f;
-	}
-	else {
-		vscode.window.showErrorMessage("Last Log: Working folder not found, open a folder an try again");
-		return undefined;
-	}
+	return vscode.workspace.workspaceFolders?.[0]?.uri?.fsPath;
 }
 
 // This method is called when your extension is deactivated
