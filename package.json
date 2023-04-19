@@ -2,9 +2,9 @@
 	"name": "vscode-last-log",
 	"displayName": "Last log",
 	"publisher": "FrancescoAnzalone",
-	"description": "A convenient way to open the most recent file inside a folder of your choice",
+	"description": "View the most recent file in a configurable folder",
 	"icon": "resources/logo128x128.png",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.66.1"
@@ -26,24 +26,31 @@
 			"properties": {
 			  "lastLog.folderPath": {
 				 "type": "string",
-				 "default": "xml",
-				 "markdownDescription": "Specifies the folder path containing the log files. Default value is **'xml'** which represents: **\\workspace-folder\\xml**. To navigate back outside the workspace add ..\\ for each folder."
+				 "default": "logs",
+				 "markdownDescription": "Specifies the folder path containing the log files. Default value is **'logs'** which represents: **\\myWorkspaceFolder\\logs**. To navigate back outside the workspace add ..\\ for each folder."
 			  },
 			  "lastLog.fileExtension": {
 				 "type": "string",
 				 "default": "",
-				 "description": "The extension of the log file. If no value is set or value is '*' it will open all file types."
+				 "description": "The file extension of the log files. If unset or set to '*' it will work on any file type."
 			  },
 			  "lastLog.includeSubfolders": {
 				 "type": "boolean",
-				 "default": true
+				 "default": true,
+				 "description": "Specifies if the logs located in folders are to be considered (any depth level). Default true."
 			  },
 			  "lastLog.excludeFolders": {
 				 "type": "array",
 				 "items": {
 					"type": "string"
 				 },
-				 "default": []
+				 "default": [],
+				 "description": "Specifies a list of folders to be ignored (it only has effect when includeSubfolders is set to true)."
+			  },
+			  "lastLog.logRetentionTime": {
+				 "type": "number",
+				 "description": "Sets the maximum age (in minutes) of log files in the workspace. Files older than this limit will be deleted. This action will trigger when opening a log file. If unset or set to 0 this functionality will be disabled, and no log files will be deleted from the folder. Default 0.",
+				 "default": 0
 			  }
 			}
 		 }

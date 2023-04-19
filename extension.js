@@ -18,8 +18,7 @@ function activate(context) {
 
 	const myCommand = vscode.commands.registerCommand('vscode-last-log.openLastLog', async function () {
 		const lastLog = await getLastLog();
-		if (lastLog == undefined) return;
-		if (lastLog.pathLastFile == "") {
+		if (lastLog?.pathLastFile == "") {
 			vscode.window.showWarningMessage('Last Log: No logs found');
 		} else {
 			vscode.window.showInformationMessage(`~${ checkFileAge(lastLog.max)} @ ${lastLog.maxFile}`);
@@ -47,7 +46,8 @@ async function getLastLog() {
 	// Get 'include subfolder' from user configuration
 	const incSubFolders = vscode.workspace.getConfiguration('lastLog').get('includeSubfolders');
 	const excludedFolders = vscode.workspace.getConfiguration('lastLog').get('excludeFolders');
-	const lastFile = await getLastFile({incSubFolders, excludedFolders}, logFolder);
+	const logRetentionTime = vscode.workspace.getConfiguration('lastLog').get('logRetentionTime');
+	const lastFile = await getLastFile({incSubFolders, excludedFolders, logRetentionTime}, logFolder);
 
 	return lastFile;
 }
@@ -60,7 +60,9 @@ async function getLastFile(userConfig, logFolder, max = 0, maxFile = "", pathLas
 			const filePath = path.join(logFolder, file);
 			const stat = fs.statSync(filePath);
 			if (stat.isFile() && checkFileExtension(file)) {
-				if (stat.mtime > max) {
+				if(userConfig.logRetentionTime && isLogExpired(userConfig.logRetentionTime, stat.birthtimeMs)){
+					deleteLog(filePath);
+				} else if (stat.mtime > max) {
 					max = stat.mtime;
 					maxFile = file;
 					pathLastFile = filePath;
@@ -74,6 +76,25 @@ async function getLastFile(userConfig, logFolder, max = 0, maxFile = "", pathLas
 		console.error(err);
 	}
 	return ({ max, maxFile, pathLastFile });
+}
+
+function isLogExpired(logRetentionTime, logCreationTimeMs){
+	let fileAge = new Date() - logCreationTimeMs;
+	// Convert to minutes
+	fileAge = fileAge / 1000 / 60;
+
+	return fileAge > logRetentionTime;
+}
+
+function deleteLog(filePath){
+	// delete the file at path 'filePath'
+	fs.unlink(filePath, (err) => {
+		if (err) {
+		console.error(err);
+		vscode.window.showErrorMessage(`Failed to delete file at ${filePath}`);
+		return;
+		}
+	});
 }
 
 function checkFileExtension(file){
