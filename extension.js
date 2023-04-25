@@ -1,12 +1,17 @@
 const vscode = require('vscode');
-const fs = require('fs');
-const fsP = require('fs/promises');
+const fsPromises = require('fs/promises');
 const path = require('node:path');
 
 /**
  * @param {vscode.ExtensionContext} context
  */
+
+let logChannel;
+let userConfig = {}
+
 function activate(context) {
+
+	logChannel = vscode.window.createOutputChannel('Last Log', { log: true });
 
 	// Create status bar item
 	const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 11000);
@@ -17,84 +22,166 @@ function activate(context) {
 	myStatusBarItem.show();
 
 	const myCommand = vscode.commands.registerCommand('vscode-last-log.openLastLog', async function () {
-		const lastLog = await getLastLog();
-		if (lastLog?.pathLastFile == "") {
+
+		// Update user config
+		userConfig = getConfig();
+
+		// Get root folder of the workspace
+		const workspaceFolder = getWorkspacePath();
+		if( workspaceFolder == undefined ){
+			vscode.window.showErrorMessage("Last Log: Workspace folder not found, open a folder an try again.");
+			return;
+		}
+		userConfig.ROOT_PATH = path.join(workspaceFolder, userConfig.LOG_FOLDER)
+		logChannel.appendLine('userConfig: ' + JSON.stringify(userConfig));
+
+		const lastLog = await getLastLog(userConfig.ROOT_PATH);
+
+		if (lastLog?.latestFilePath == "") {
 			vscode.window.showWarningMessage('Last Log: No logs found');
 		} else {
-			vscode.window.showInformationMessage(`~${ checkFileAge(lastLog.max)} @ ${lastLog.maxFile}`);
+			vscode.window.showInformationMessage(`~ ${checkFileAge(lastLog.latestFileAge)} @ ${lastLog.latestFile}`);
 			// Open the file
-			vscode.commands.executeCommand('vscode.open', vscode.Uri.file(lastLog.pathLastFile));
+			vscode.commands.executeCommand('vscode.open', vscode.Uri.file(lastLog.latestFilePath));
 		}
+		// Delete expired logs and empty folders
+		await cleanup();
 	});
 
 	context.subscriptions.push(myStatusBarItem, myCommand);
 
+	logChannel.appendLine('Last Log extension activated');
 }
 
-async function getLastLog() {
-	
-	// Get root folder of the workspace
-	const workSpaceFolder = getWorkspacePath();
-	
-	if( workSpaceFolder == undefined ){
-		vscode.window.showErrorMessage("Last Log: Workspace folder not found, open a folder an try again.");
-		return;
-	}
-	
-	// Get log folder path from user configuration
-	const logFolder = path.join(workSpaceFolder, vscode.workspace.getConfiguration('lastLog').get('folderPath'));
-	// Get 'include subfolder' from user configuration
-	const incSubFolders = vscode.workspace.getConfiguration('lastLog').get('includeSubfolders');
-	const excludedFolders = vscode.workspace.getConfiguration('lastLog').get('excludeFolders');
-	const logRetentionTime = vscode.workspace.getConfiguration('lastLog').get('logRetentionTime');
-	const lastFile = await getLastFile({incSubFolders, excludedFolders, logRetentionTime}, logFolder);
-
-	return lastFile;
+function getConfig() {
+	return ({
+		INCLUDE_SUBFOLDERS      : vscode.workspace.getConfiguration('lastLog').get('includeSubfolders'),
+		EXCLUDE_FOLDERS         : vscode.workspace.getConfiguration('lastLog').get('excludeFolders'),
+		LOG_RETENTION_TIME      : vscode.workspace.getConfiguration('lastLog').get('logRetentionTime'),
+		DELETE_EXCLUDED_FOLDERS : vscode.workspace.getConfiguration('lastLog').get('deleteExcludedFolders'),
+		DELETE_EMPTY_FOLDERS    : vscode.workspace.getConfiguration('lastLog').get('deleteEmptyFolders'),
+		LOG_FOLDER              : vscode.workspace.getConfiguration('lastLog').get('folderPath'),
+		ROOT_PATH					: undefined
+		});
 }
 
-async function getLastFile(userConfig, logFolder, max = 0, maxFile = "", pathLastFile = "") {
+async function getLastLog(currentPath, latestFile = "", latestFileAge = 0, latestFilePath = "", excludedFolder = false) {
 	// Find the most recent file including subfolders
 	try {
-		const files = await fsP.readdir(logFolder);
-		for (const file of files){
-			const filePath = path.join(logFolder, file);
-			const stat = fs.statSync(filePath);
-			if (stat.isFile() && checkFileExtension(file)) {
-				if(userConfig.logRetentionTime && isLogExpired(userConfig.logRetentionTime, stat.birthtimeMs)){
-					deleteLog(filePath);
-				} else if (stat.mtime > max) {
-					max = stat.mtime;
-					maxFile = file;
-					pathLastFile = filePath;
+		const folderContent = await fsPromises.readdir(currentPath);
+	
+		for (const item of folderContent) {
+			const itemPath = path.join(currentPath, item);
+			const itemStats = await fsPromises.stat(itemPath);
+
+			// If item is a file
+			if (itemStats.isFile()) {
+				if (!checkFileExtension(item)) continue;
+				if (userConfig.LOG_RETENTION_TIME && isLogExpired(userConfig.LOG_RETENTION_TIME, itemStats.mtimeMs)) continue;
+				if (!excludedFolder && itemStats.mtimeMs > latestFileAge) {
+					latestFile = item;
+					latestFileAge = itemStats.mtimeMs;
+					latestFilePath = itemPath;
+					continue;
 				}
-			} else if (stat.isDirectory() && userConfig.incSubFolders) {
-				if (userConfig.excludedFolders.length && userConfig.excludedFolders.includes(file)) continue;
-				({ max, maxFile, pathLastFile } = await getLastFile(userConfig, filePath, max, maxFile, pathLastFile));
+			}
+
+			// If item is a folder
+			if (itemStats.isDirectory() && userConfig.INCLUDE_SUBFOLDERS) {
+				// If the folder is in the excluded folders list
+				if (userConfig.EXCLUDE_FOLDERS.length && userConfig.EXCLUDE_FOLDERS.includes(item)) {
+					// If DELETE_EXCLUDED_FOLDERS is true, set excludedFolder to true so the files inside the folder are ignored
+					if (userConfig.DELETE_EXCLUDED_FOLDERS){
+						({ latestFile, latestFileAge, latestFilePath } = await getLastLog(itemPath, latestFile, latestFileAge, latestFilePath, true));
+						continue;
+					}
+					else continue;
+				}
+
+				({ latestFile, latestFileAge, latestFilePath } = await getLastLog(itemPath, latestFile, latestFileAge, latestFilePath, excludedFolder));
 			}
 		}
 	} catch (err) {
 		console.error(err);
+		logChannel.appendLine(err);
 	}
-	return ({ max, maxFile, pathLastFile });
+	return ({ latestFile, latestFileAge, latestFilePath });
 }
 
-function isLogExpired(logRetentionTime, logCreationTimeMs){
+async function cleanup() {
+	if (userConfig.LOG_RETENTION_TIME) await deleteExpiredLogs(userConfig.ROOT_PATH);
+	if (userConfig.DELETE_EMPTY_FOLDERS) await deleteEmptyFolders(userConfig.ROOT_PATH);
+}
+
+async function deleteExpiredLogs(currentPath) {
+	try {
+		const folderContent = await fsPromises.readdir(currentPath);
+		for (const item of folderContent) {
+			const itemPath = path.join(currentPath, item);
+			const itemStats = await fsPromises.stat(itemPath);
+
+			// If item is a file
+			if (itemStats.isFile()) {
+				if (!checkFileExtension(item)) continue;
+				if (isLogExpired(userConfig.LOG_RETENTION_TIME, itemStats.mtimeMs)) {
+					await fsPromises.unlink(itemPath);
+				}
+				continue;
+			}
+
+			// If item is not a folder and INCLUDE_SUBFOLDERS is false, return
+			if (!itemStats.isDirectory() || !userConfig.INCLUDE_SUBFOLDERS) continue;
+		
+			// If folder in EXCLUDE_FOLDERS and DELETE_EXCLUDED_FOLDERS is false, skip it
+			if (userConfig.EXCLUDE_FOLDERS.length && userConfig.EXCLUDE_FOLDERS.includes(item) && !userConfig.DELETE_EXCLUDED_FOLDERS)	continue;
+			await deleteExpiredLogs(itemPath);
+		}
+	} catch (err) {
+		console.error(err);
+		logChannel.appendLine(err);
+	}
+}
+
+async function deleteEmptyFolders(currentPath) {
+	try {
+		let folderContent = await fsPromises.readdir(currentPath);
+		// If folder is empty and DELETE_EMPTY_FOLDERS is true, delete it
+		if (folderContent.length == 0 && currentPath != userConfig.ROOT_PATH) {
+			await fsPromises.rm(currentPath, {maxRetries: 5, recursive: true});
+			logChannel.appendLine(`Deleted empty folder: ${currentPath.toString()}`);
+			return;
+		}
+		if(!userConfig.INCLUDE_SUBFOLDERS) return;
+
+		for (const item of folderContent) {
+			const itemPath = path.join(currentPath, item);
+			const itemStats = await fsPromises.stat(itemPath);
+
+			if (!itemStats.isDirectory()) continue;
+
+			// If folder in EXCLUDE_FOLDERS and DELETE_EXCLUDED_FOLDERS is false, skip it
+			if (userConfig.EXCLUDE_FOLDERS.length && userConfig.EXCLUDE_FOLDERS.includes(item) && !userConfig.DELETE_EXCLUDED_FOLDERS)	continue;
+
+			await deleteEmptyFolders(itemPath);
+		}
+		// Recheck if folder is empty after processing child folders
+		folderContent = await fsPromises.readdir(currentPath);
+		if (folderContent.length == 0 && currentPath != userConfig.ROOT_PATH) {
+			await fsPromises.rm(currentPath, {maxRetries: 5, recursive: true});
+			logChannel.appendLine(`Deleted empty folder: ${currentPath.toString()}`);
+		}
+	} catch (err) {
+		console.error(err);
+		logChannel.appendLine(err);
+	}
+}
+
+function isLogExpired(LOG_RETENTION_TIME, logCreationTimeMs) {
 	let fileAge = new Date() - logCreationTimeMs;
 	// Convert to minutes
 	fileAge = fileAge / 1000 / 60;
 
-	return fileAge > logRetentionTime;
-}
-
-function deleteLog(filePath){
-	// delete the file at path 'filePath'
-	fs.unlink(filePath, (err) => {
-		if (err) {
-		console.error(err);
-		vscode.window.showErrorMessage(`Failed to delete file at ${filePath}`);
-		return;
-		}
-	});
+	return fileAge > LOG_RETENTION_TIME;
 }
 
 function checkFileExtension(file){
@@ -111,12 +198,15 @@ function checkFileAge(sfileDate){
 	let days = ageDate.getDate() - 1;
 	let months = ageDate.getMonth();
 	let years = ageDate.getFullYear() - 1970;
-	let timeString = years ? years + " yr" :
-						months ? months + " mth" :
-						days ? days + " d" :
-						hours ? hours + " hr" :
-						minutes ? minutes + " min" :
-						seconds + " s";
+	let timeString = "";
+	switch(true){
+		case years   > 0: timeString = years + " yr";    break;
+		case months  > 0: timeString = months + " mth";  break;
+		case days    > 0: timeString = days + " d";      break;
+		case hours   > 0: timeString = hours + " hr";    break;
+		case minutes > 0: timeString = minutes + " min"; break;
+		default: timeString = seconds + " s";
+	}
 	return timeString;
 }
 

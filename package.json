@@ -31,8 +31,8 @@
 			  },
 			  "lastLog.fileExtension": {
 				 "type": "string",
-				 "default": "",
-				 "description": "The file extension of the log files. If unset or set to '*' it will work on any file type."
+				 "default": "log",
+				 "description": "The file extension of the log files. If unset or set to '*' it will work on any file type. Default is 'log'."
 			  },
 			  "lastLog.includeSubfolders": {
 				 "type": "boolean",
@@ -51,6 +51,16 @@
 				 "type": "number",
 				 "description": "Sets the maximum age (in minutes) of log files in the workspace. Files older than this limit will be deleted. This action will trigger when opening a log file. If unset or set to 0 this functionality will be disabled, and no log files will be deleted from the folder. Default 0.",
 				 "default": 0
+			  },
+			  "lastLog.deleteExcludedFolders": {
+				 "type": "boolean",
+				 "description": "If set to true, the files located inside excluded folders will be deleted according to the logRetentionTime setting. This action will trigger when opening a log file. If unset or set to false, the excluded folders will be ignored and not deleted. Default false.",
+				 "default": false
+			  },
+			  "lastLog.deleteEmptyFolders": {
+				 "type": "boolean",
+				 "description": "If set to true, any empty subfolder will be removed. This action will trigger when opening a log file. If unset or set to false, empty folders will be ignored and not deleted. Default false.",
+				 "default": false
 			  }
 			}
 		 }
