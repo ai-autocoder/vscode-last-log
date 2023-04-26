@@ -5,6 +5,8 @@
 - Added "Log retention time" feature
 - Added "Delete excluded folders" feature
 - Added "Delete empty folders" feature
+- Changed default for "folderPath" setting to "logs"
+- Added logging channel
 
 ## [0.0.3]
 
