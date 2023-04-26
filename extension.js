@@ -118,6 +118,7 @@ async function deleteExpiredLogs(currentPath) {
 				if (!checkFileExtension(item)) continue;
 				if (isLogExpired(userConfig.LOG_RETENTION_TIME, itemStats.mtimeMs)) {
 					await fsPromises.unlink(itemPath);
+					logChannel.appendLine(`Deleted expired log: ${itemPath}`);
 				}
 				continue;
 			}
