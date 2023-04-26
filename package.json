@@ -2,10 +2,13 @@
 	"name": "vscode-last-log",
 	"displayName": "Last log",
 	"publisher": "FrancescoAnzalone",
-	"description": "View the most recent file in a configurable folder",
+	"description": "View the most recent file in a configurable folder and manage the log files.",
 	"icon": "resources/logo128x128.png",
 	"version": "0.0.4",
 	"license": "MIT",
+	"keywords": [
+		"vscode", "extension", "log", "logs", "last", "latest", "most recent", "open", "view", "newest", "folder", "delete", "empty folders", "older logs", "retention", "retention time", "delete files", "delete folders", "clean", "filter", "manage logs", "manage log files", "clean logs folder", "manage log files"
+	],
 	"engines": {
 		"vscode": "^1.66.1"
 	},
