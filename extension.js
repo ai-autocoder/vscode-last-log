@@ -65,7 +65,7 @@ function getConfig() {
 		});
 }
 
-async function getLastLog(currentPath, latestFile = "", latestFileAge = 0, latestFilePath = "", excludedFolder = false) {
+async function getLastLog(currentPath, latestFile = "", latestFileAge = 0, latestFilePath = "") {
 	// Find the most recent file including subfolders
 	try {
 		const folderContent = await fsPromises.readdir(currentPath);
@@ -78,7 +78,7 @@ async function getLastLog(currentPath, latestFile = "", latestFileAge = 0, lates
 			if (itemStats.isFile()) {
 				if (!checkFileExtension(item)) continue;
 				if (userConfig.LOG_RETENTION_TIME && isLogExpired(userConfig.LOG_RETENTION_TIME, itemStats.mtimeMs)) continue;
-				if (!excludedFolder && itemStats.mtimeMs > latestFileAge) {
+				if (itemStats.mtimeMs > latestFileAge) {
 					latestFile = item;
 					latestFileAge = itemStats.mtimeMs;
 					latestFilePath = itemPath;
@@ -89,16 +89,9 @@ async function getLastLog(currentPath, latestFile = "", latestFileAge = 0, lates
 			// If item is a folder
 			if (itemStats.isDirectory() && userConfig.INCLUDE_SUBFOLDERS) {
 				// If the folder is in the excluded folders list
-				if (userConfig.EXCLUDE_FOLDERS.length && userConfig.EXCLUDE_FOLDERS.includes(item)) {
-					// If DELETE_EXCLUDED_FOLDERS is true, set excludedFolder to true so the files inside the folder are ignored
-					if (userConfig.DELETE_EXCLUDED_FOLDERS){
-						({ latestFile, latestFileAge, latestFilePath } = await getLastLog(itemPath, latestFile, latestFileAge, latestFilePath, true));
-						continue;
-					}
-					else continue;
-				}
+				if (userConfig.EXCLUDE_FOLDERS.length && userConfig.EXCLUDE_FOLDERS.includes(item))	continue;
 
-				({ latestFile, latestFileAge, latestFilePath } = await getLastLog(itemPath, latestFile, latestFileAge, latestFilePath, excludedFolder));
+				({ latestFile, latestFileAge, latestFilePath } = await getLastLog(itemPath, latestFile, latestFileAge, latestFilePath));
 			}
 		}
 	} catch (err) {
