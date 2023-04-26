@@ -1,8 +1,8 @@
-<div style="max-width: 1920px;">
+<div style="max-width: 1280px">
 
 # Last Log
 
-<p style="text-align: center;">
+<p align="center">
   <img src="https://github.com/ai-autocoder/vscode-last-log/blob/main/resources/logo128x128.png?raw=true" width="128" alt="Logo">
 </p>
 
@@ -11,28 +11,28 @@
 Last Log offers a convenient way to view the most recent file inside a folder of your choice.
 It is possible to use the extension in 3 ways: from the button on the left side of the status bar, from the command line with the command "Open last log", or by creating a custom key binding.
 
-<div style="text-align: center;">
 
-![After](resources/command-line.png)
+![command](resources/command-line.png)
 
-</div>
-<div style="text-align: center;">
 
-![After](resources/status-bar.png)
+![status bar](resources/status-bar.png)
 
-</div>
 
 ## Settings
 
 This extension contributes the following settings:
 
-* `lastLog.folderPath`: Specifies the folder path containing the log files. Default value is **'logs'** which represents: **\\workspace-folder\\logs**. To navigate back outside the workspace add ..\\ for each folder.
-* `lastLog.includeSubfolders`: Specifies if the logs located in subfolders are to be considered (any depth level). Default true.
-* `lastLog.fileExtension`: The file extension of the log files. If unset or set to '*' it will work on any file type. Default is 'log'.
-* `lastLog.excludeFolders`: Specifies a list of folders to be ignored (it only has effect when includeSubfolders is set to true).
-* `lastLog.logRetentionTime`: Sets the maximum age (in minutes) of log files in the workspace. Files older than this limit will be deleted. This action will trigger when opening a log file. If unset or set to 0 this functionality will be disabled, and no log files will be deleted from the folder. Default 0.
-* `lastLog.deleteExcludedFolders`: If set to true, the files located inside excluded folders will be deleted according to the logRetentionTime setting. This action will trigger when opening a log file. If unset or set to false, the excluded folders will be ignored and not deleted. Default false.
-* `lastLog.deleteEmptyFolders`: If set to true, any empty subfolder will be removed. This action will trigger when opening a log file. If unset or set to false, empty folders will be ignored and not deleted. Default false.
+| Variable                             | Default       | Description                                                                                                                                                                                                                 |
+| ------------------------------------ | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lastLog.folderPath`                 | `logs`        | The path containing the log files relative to the workspace folder. To navigate back outside the workspace add ..\\ for each folder.                                                                                        |
+| `lastLog.includeSubfolders`          | `true`        | Specifies if the logs located in subfolders are to be considered (any depth level).                                                                                                                                         |
+| `lastLog.fileExtension`              | `log`         | The file extension of the log files. If unset or set to '|' it will work on any file type. Default is 'log'.                                                                                                                |
+| `lastLog.excludeFolders`             | `0`           | Specifies a list of folders to be ignored (it only has effect if includeSubfolders is set to true).                                                                                                                       |
+| `lastLog.logRetentionTime`           | `0`           | Sets the maximum age (in minutes) of log files in the workspace. Files older than this limit will be deleted. If unset or set to 0 this functionality will be disabled, and no log files will be deleted from the folder.   |
+| `lastLog.deleteExcludedFolders`      | `false`       | If set to true, the files located inside excluded folders will be deleted according to the logRetentionTime setting. If unset or set to false, the excluded folders will be ignored and not deleted.                        |
+| `lastLog.deleteEmptyFolders`         | `false`       | If set to true, any empty subfolder will be removed. If unset or set to false, empty folders will be ignored and not deleted.                                                                                               |
+* Deletion actions will be triggered when opening a log file.
+
 
 ### Example configuration:
 

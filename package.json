@@ -45,7 +45,7 @@
 					"type": "string"
 				 },
 				 "default": [],
-				 "description": "Specifies a list of folders to be ignored (it only has effect when includeSubfolders is set to true)."
+				 "description": "Specifies a list of folders to be ignored (it only has effect if includeSubfolders is set to true)."
 			  },
 			  "lastLog.logRetentionTime": {
 				 "type": "number",
