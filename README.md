@@ -3,7 +3,7 @@
 # Last Log
 
 <p align="center">
-  <img src="https://github.com/ai-autocoder/vscode-last-log/blob/main/resources/logo128x128.png?raw=true" width="128" alt="Logo">
+  <img src="https://github.com/ai-autocoder/vscode-last-log/blob/main/resources/logo.png?raw=true" width="128" alt="Logo">
 </p>
 
 ## Features
@@ -49,6 +49,10 @@ This extension contributes the following settings:
 	"lastLog.deleteEmptyFolders": true
 }
 ```
+
+### Credits
+
+Main icon by @OllyLove
 
 **Enjoy!**
 

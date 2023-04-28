@@ -1,5 +1,10 @@
 # Change Log
 
+
+## [0.0.5]
+
+- New icon (Thanks to @OllyLove)
+
 ## [0.0.4]
 
 - Added "Log retention time" feature

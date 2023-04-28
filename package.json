@@ -3,7 +3,7 @@
 	"displayName": "Last log",
 	"publisher": "FrancescoAnzalone",
 	"description": "View the most recent file in a configurable folder and manage the log files.",
-	"icon": "resources/logo128x128.png",
+	"icon": "resources/logo.png",
 	"version": "0.0.4",
 	"license": "MIT",
 	"keywords": [
