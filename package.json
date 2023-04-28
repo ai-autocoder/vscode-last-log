@@ -7,7 +7,7 @@
 	"version": "0.0.4",
 	"license": "MIT",
 	"keywords": [
-		"vscode", "extension", "log", "logs", "last", "latest", "most recent", "open", "view", "newest", "folder", "delete", "empty folders", "older logs", "retention", "retention time", "delete files", "delete folders", "clean", "filter", "manage logs", "manage log files", "clean logs folder", "manage log files"
+		"log", "file", "latest", "open", "manage"
 	],
 	"engines": {
 		"vscode": "^1.66.1"
