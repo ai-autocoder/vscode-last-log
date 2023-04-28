@@ -4,7 +4,7 @@
 	"publisher": "FrancescoAnzalone",
 	"description": "View the most recent file in a configurable folder and manage the log files.",
 	"icon": "resources/logo.png",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"license": "MIT",
 	"keywords": [
 		"log", "file", "latest", "open", "manage"
