@@ -7,7 +7,11 @@
 	"version": "0.0.5",
 	"license": "MIT",
 	"keywords": [
-		"log", "file", "latest", "open", "manage"
+		"log",
+		"file",
+		"latest",
+		"open",
+		"manage"
 	],
 	"engines": {
 		"vscode": "^1.66.1"
@@ -16,80 +20,92 @@
 		"Other"
 	],
 	"activationEvents": [
-	"*"
+		"*"
 	],
-	"main": "./extension.js",
+	"main": "./dist/extension.js",
 	"contributes": {
-		"commands": [{
-			"command": "vscode-last-log.openLastLog",
-			"title": "Open last log"
-		}],
+		"commands": [
+			{
+				"command": "vscode-last-log.openLastLog",
+				"title": "Open last log"
+			}
+		],
 		"configuration": {
 			"title": "Last Log",
 			"properties": {
-			  "lastLog.folderPath": {
-				 "type": "string",
-				 "default": "logs",
-				 "markdownDescription": "Specifies the folder path containing the log files. Default value is **'logs'** which represents: **\\myWorkspaceFolder\\logs**. To navigate back outside the workspace add ..\\ for each folder."
-			  },
-			  "lastLog.fileExtension": {
-				 "type": "string",
-				 "default": "log",
-				 "description": "The file extension of the log files. If unset or set to '*' it will work on any file type. Default is 'log'."
-			  },
-			  "lastLog.includeSubfolders": {
-				 "type": "boolean",
-				 "default": true,
-				 "description": "Specifies if the logs located in folders are to be considered (any depth level). Default true."
-			  },
-			  "lastLog.excludeFolders": {
-				 "type": "array",
-				 "items": {
-					"type": "string"
-				 },
-				 "default": [],
-				 "description": "Specifies a list of folders to be ignored (it only has effect if includeSubfolders is set to true)."
-			  },
-			  "lastLog.logRetentionTime": {
-				 "type": "number",
-				 "description": "Sets the maximum age (in minutes) of log files in the workspace. Files older than this limit will be deleted. This action will trigger when opening a log file. If unset or set to 0 this functionality will be disabled, and no log files will be deleted from the folder. Default 0.",
-				 "default": 0
-			  },
-			  "lastLog.deleteExcludedFolders": {
-				 "type": "boolean",
-				 "description": "If set to true, the files located inside excluded folders will be deleted according to the logRetentionTime setting. This action will trigger when opening a log file. If unset or set to false, the excluded folders will be ignored and not deleted. Default false.",
-				 "default": false
-			  },
-			  "lastLog.deleteEmptyFolders": {
-				 "type": "boolean",
-				 "description": "If set to true, any empty subfolder will be removed. This action will trigger when opening a log file. If unset or set to false, empty folders will be ignored and not deleted. Default false.",
-				 "default": false
-			  }
+				"lastLog.folderPath": {
+					"type": "string",
+					"default": "logs",
+					"markdownDescription": "Specifies the folder path containing the log files. Default value is **'logs'** which represents: **\\myWorkspaceFolder\\logs**. To navigate back outside the workspace add ..\\ for each folder."
+				},
+				"lastLog.fileExtension": {
+					"type": "string",
+					"default": "log",
+					"description": "The file extension of the log files. If unset or set to '*' it will work on any file type. Default is 'log'."
+				},
+				"lastLog.includeSubfolders": {
+					"type": "boolean",
+					"default": true,
+					"description": "Specifies if the logs located in folders are to be considered (any depth level). Default true."
+				},
+				"lastLog.excludeFolders": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [],
+					"description": "Specifies a list of folders to be ignored (it only has effect if includeSubfolders is set to true)."
+				},
+				"lastLog.logRetentionTime": {
+					"type": "number",
+					"description": "Sets the maximum age (in minutes) of log files in the workspace. Files older than this limit will be deleted. This action will trigger when opening a log file. If unset or set to 0 this functionality will be disabled, and no log files will be deleted from the folder. Default 0.",
+					"default": 0
+				},
+				"lastLog.deleteExcludedFolders": {
+					"type": "boolean",
+					"description": "If set to true, the files located inside excluded folders will be deleted according to the logRetentionTime setting. This action will trigger when opening a log file. If unset or set to false, the excluded folders will be ignored and not deleted. Default false.",
+					"default": false
+				},
+				"lastLog.deleteEmptyFolders": {
+					"type": "boolean",
+					"description": "If set to true, any empty subfolder will be removed. This action will trigger when opening a log file. If unset or set to false, empty folders will be ignored and not deleted. Default false.",
+					"default": false
+				}
 			}
-		 }
-	},
-	"scripts": {
-		"lint": "eslint .",
-		"pretest": "npm run lint",
-		"test": "node ./test/runTest.js"
+		}
 	},
 	"author": {
 		"name": "Francesco Anzalone",
 		"email": "francesco.a@mail.com"
-	 },
-	 "repository": {
+	},
+	"repository": {
 		"type": "git",
 		"url": "https://github.com/ai-autocoder/vscode-last-log.git"
-	 },
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run package",
+		"compile": "webpack",
+		"watch": "webpack --watch",
+		"package": "webpack --mode production --devtool hidden-source-map",
+		"compile-tests": "tsc -p . --outDir out",
+		"watch-tests": "tsc -p . -w --outDir out",
+		"pretest": "npm run compile-tests && npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
 	"devDependencies": {
-		"@types/vscode": "^1.66.1",
-		"@types/glob": "^8.0.0",
-		"@types/mocha": "^10.0.1",
-		"@types/node": "16.x",
-		"eslint": "^8.28.0",
-		"glob": "^8.0.3",
-		"mocha": "^10.1.0",
-		"typescript": "^4.9.3",
-		"@vscode/test-electron": "^2.2.0"
+		"@types/vscode": "^1.83.0",
+		"@types/mocha": "^10.0.2",
+		"@types/node": "18.x",
+		"@typescript-eslint/eslint-plugin": "^6.7.3",
+		"@typescript-eslint/parser": "^6.7.3",
+		"eslint": "^8.50.0",
+		"glob": "^10.3.3",
+		"mocha": "^10.2.0",
+		"typescript": "^5.2.2",
+		"ts-loader": "^9.4.4",
+		"webpack": "^5.88.2",
+		"webpack-cli": "^5.1.4",
+		"@vscode/test-electron": "^2.3.4"
 	}
 }
