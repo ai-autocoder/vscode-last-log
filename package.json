@@ -2,7 +2,7 @@
 	"name": "vscode-last-log",
 	"displayName": "Last log",
 	"publisher": "FrancescoAnzalone",
-	"description": "View the most recent file in a configurable folder and manage the log files.",
+	"description": "Effortlessly view and manage your log files. Fully configurable.",
 	"icon": "resources/logo.png",
 	"version": "0.0.5",
 	"license": "MIT",
