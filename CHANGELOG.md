@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.6]
+
+- Updated README
+- Refactored in Typescript
 
 ## [0.0.5]
 

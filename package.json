@@ -4,7 +4,7 @@
 	"publisher": "FrancescoAnzalone",
 	"description": "Effortlessly view and manage your log files. Fully configurable.",
 	"icon": "resources/logo.png",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"license": "MIT",
 	"keywords": [
 		"log",
