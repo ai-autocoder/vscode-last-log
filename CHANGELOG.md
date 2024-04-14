@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.7]
+
+- Updated devDependencies
+- Updated README and extension description
+- 
 ## [0.0.6]
 
 - Updated README
