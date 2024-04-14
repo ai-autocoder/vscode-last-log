@@ -2,7 +2,7 @@
 	"name": "vscode-last-log",
 	"displayName": "Last log",
 	"publisher": "FrancescoAnzalone",
-	"description": "Effortlessly view and manage your log files. Fully configurable.",
+	"description": "Open the last modified file and delete older files based on age.",
 	"icon": "resources/logo.png",
 	"version": "0.0.6",
 	"license": "MIT",
