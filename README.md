@@ -9,7 +9,7 @@
  <br>
 </h1>
 
-<h4 align="center">Effortlessly view and manage your log files. Fully configurable.</h4>
+<h4 align="center">View and manage your log files. Fully configurable.</h4>
 
 <p align="center">
  <a href="https://marketplace.visualstudio.com/items?itemName=FrancescoAnzalone.vscode-last-log">
@@ -18,8 +18,19 @@
 
 ## Features
 
-Last Log offers a convenient way to view the most recent file inside a folder of your choice.
-It is possible to use the extension in 3 ways: from the button on the left side of the status bar, from the command line with the command "Open last log", or by creating a custom key binding.
+**Last Log** provides a convenient way to **open the most recently modified file** within a folder in a new VS Code editor tab.
+
+Additionally, it offers optional **automated cleanup of older files and empty directories** based on **configurable age settings**.
+
+It works with any file type but can be configured to target specific file extensions.
+
+## Usage
+
+The extension can be utilized in three ways:
+
+- Via the **Status Bar button** on the left side
+- Through the **Command Palette** using the "Open last log" command
+- By configuring a custom **Keybinding**
 
 ![command](resources/command-line.png)
 
